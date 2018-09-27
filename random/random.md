@@ -7,8 +7,11 @@ sesame.mock(url,method,data);
 data为函数时可以调用sesame.random来生成各种随机数。
 
 # 随机数规则 
-sesame会将带有$type的对象传入$type值的随机数生成器中，$type之外的属性则会作为参数传入生成器中。  
+>sesame会将带有$type的对象传入\$type值的随机数生成器中。  
+\$type之外的属性则会作为参数传入生成器中。  
+
 例:
+
 ```
 sesame.mock("/goform/getMyData","post",{
     randomNumber:{

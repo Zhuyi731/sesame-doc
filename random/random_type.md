@@ -1,8 +1,43 @@
 左上角有搜索按钮  
 右上角有索引的哦~
 
-#公共属性  
+sesame.mock(url,method,data);
 
+#根级属性
+只有当data为json对象或数组时，才需要进行解析。   
+当json对象的第一层具有如下属性时。会做一个特殊处理  
+
+\$before:function(req){} 当具有\$before属性时,在进入解析前，会先进入\$before的函数，传入request对象。可以在这里对请求进行处理然后缓存数据。  
+
+\$response:"file" || "json" || "xml"  表示返回的类型，当为file时，需要额外配置\$filePath来指定返回值的路径
+
+\$filePath:string || function   表示文件的绝对路径，当为function时，需要返回一个绝对路径  
+
+\$status:number   表示响应状态码  
+
+\$delay:number    表示该请求至少多少毫秒后才返回  单位ms
+
+例子：
+```
+sesame.rule.js  
+
+let requestData,
+requestUrl;
+sesame.mock("gofor/getUser",{
+    $before : (req)=>{
+       requestData = req.body;//如果是get请求参数在req.params里
+       requestUrl = req.originalUrl;
+    },
+    retData:()=>{
+        return {
+            data:requestData,
+            from:requestUrl
+        }
+    }
+})
+```
+
+#公共属性  
 \$type:type  表示随机数的类型   
 
 \$pool:[]    当配置有\$pool时，无论\$type为何值,总是会优先从pool中选取一个值。如果想选取多个值，请使用array类型  
@@ -11,8 +46,10 @@
 
 \$exclude:regExp  输出满足该正则表达式时重新随机。如果同时配置了\$include会需要同时满足两者。随机超过100次之后会报错（todo）
 
+$store（todo）:  本地的储存空间，该对象不会被解析,在rule中可以通过this.$stroe来存取数据
+
 #随机数拓展  
-如果你想拓展自己的随机数，请看这里[随机数拓展](../api/README.md)
+如果你想拓展自己的随机数，请看这里 [随机数拓展](../random/random_extend.md)
 
 ##boolean  
 随机生成一个布尔值 true或者false
@@ -75,7 +112,7 @@ demo:
 随机生成一个指定格式的时间，或者时间戳  
 **参数** todo
 
-#array
+##array
 随机生成一个数组  
 **参数**  
 **length**:[min,max] || length  ,表示数组随机的长度  min可以等于max  
